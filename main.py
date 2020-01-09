@@ -1,15 +1,30 @@
-# https://www.pygame.org/docs/
+# Doc Pygame:   https://www.pygame.org/docs/
+# Sounds:       https://opengameart.org/
+# Sprites:      https://www.pixilart.com/
 import pygame
 pygame.init()
 display = pygame.display.set_mode([1280, 720])
 pygame.display.set_caption("Jogo de corno 2D")
 
+# Sprites
+spriteGroup = pygame.sprite.Group()
+
+monster = pygame.sprite.Sprite(spriteGroup)
+monster.image = pygame.image.load("data/Images/monster.png").convert_alpha()
+# Changing image scale
+monster.image = pygame.transform.scale(monster.image, [120, 120])
+monster.rect = monster.image.get_rect()
+
 # Objects
 rect = pygame.Rect(540, 310, 200, 100)
+speed = 10
+
+# Sounds
+sound = pygame.mixer.Sound("data/Sounds/laserpew.ogg")
 
 clock = pygame.time.Clock();
 gameLoop = True
-speed = 10
+
 while gameLoop:
     # Framerate
     clock.tick(60)
@@ -17,6 +32,9 @@ while gameLoop:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameLoop = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                sound.play()
         '''
         elif event.type == pygame.KEYDOWN:
             if  event.key == pygame.K_w:
@@ -28,16 +46,24 @@ while gameLoop:
             if  event.key == pygame.K_d:
                 rect[0] += 50
         '''
+    # Get inputs w, a, s and d 
     keys = pygame.key.get_pressed();
     if keys[pygame.K_w]:
-        rect[1] -= speed
+        monster.rect[1] -= speed
     if keys[pygame.K_a]:
-        rect[0] -= speed
+        monster.rect[0] -= speed
     if keys[pygame.K_s]:
-        rect[1] += speed
+        monster.rect[1] += speed
     if keys[pygame.K_d]:  
-        rect[0] += speed
+        monster.rect[0] += speed
+    
+
     # Draw...
     display.fill([10, 10, 10])
-    pygame.draw.rect(display, [0,0,255], rect);
+    pygame.draw.rect(display, [0, 0, 255], rect);
+    
+    spriteGroup.update()
+    spriteGroup.draw(display)
+
+    # Update Display
     pygame.display.update()
