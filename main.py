@@ -10,13 +10,16 @@ pygame.display.set_caption("Jogo de corno 2D")
 spriteGroup = pygame.sprite.Group()
 
 monster = pygame.sprite.Sprite(spriteGroup)
-monster.image = pygame.image.load("data/Images/monster.png").convert_alpha()
+monster.image = pygame.image.load("data/Images/xexeca.png").convert_alpha()
+piru = pygame.sprite.Sprite(spriteGroup)
+piru.image = pygame.image.load("data/Images/piru.png").convert_alpha()
 # Changing image scale
 monster.image = pygame.transform.scale(monster.image, [120, 120])
 monster.rect = monster.image.get_rect()
-
+piru.image = pygame.transform.scale(piru.image, [120, 120])
+piru.rect = piru.image.get_rect()
 # Objects
-rect = pygame.Rect(540, 310, 200, 100)
+rect = pygame.Rect(540, 310, 300, 50)
 speed = 10
 
 # Sounds
@@ -56,6 +59,15 @@ while gameLoop:
         monster.rect[1] += speed
     if keys[pygame.K_d]:  
         monster.rect[0] += speed
+
+    if keys[pygame.K_UP]:
+        piru.rect[1] -= speed
+    if keys[pygame.K_LEFT]:
+        piru.rect[0] -= speed
+    if keys[pygame.K_DOWN]:
+        piru.rect[1] += speed
+    if keys[pygame.K_RIGHT]:  
+        piru.rect[0] += speed
     
 
     # Draw...
