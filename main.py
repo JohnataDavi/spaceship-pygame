@@ -3,12 +3,19 @@ import sys
 import random
 from enemy import Enemy
 from killer import Killer
+from shot import Shot
+
 
 def events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                new_shot = Shot(shots_group, WINDOW_SIZE)
+                new_shot.rect.center = player.rect.center
+
 
 # Define display
 W, H = 1280, 720
@@ -25,7 +32,7 @@ FPS = 60
 # Background
 bg_imgs = []
 for x in range(5):
-    bg_imgs.append(pygame.image.load("data/images/background/layers/parallax-"+str(x)+".png").convert_alpha())
+    bg_imgs.append(pygame.image.load("data/images/background/layers/parallax-" + str(x) + ".png").convert_alpha())
     bg_imgs[x] = pygame.transform.scale(bg_imgs[x], WINDOW_SIZE)
 
 bg_velocity = [.1, .2, .5, .9, 1.8]
@@ -37,9 +44,12 @@ enemy_group = pygame.sprite.Group()
 # Killer
 killer_group = pygame.sprite.Group()
 
-player = Killer(killer_group)
+# Shot
+shots_group = pygame.sprite.Group()
 
-#test1.rect[0] = WINDOW_SIZE[0]
+player = Killer(killer_group, WINDOW_SIZE)
+
+# test1.rect[0] = WINDOW_SIZE[0]
 
 # Main Loop
 while True:
@@ -64,14 +74,20 @@ while True:
             y = random.randint(90, WINDOW_SIZE[1] - 90)
             new_enemy.rect.move_ip(x, y)
 
+    shots_group.update()
     killer_group.update()
-    killer_group.draw(display)
     enemy_group.update()
+
+    collisions = pygame.sprite.spritecollide(player, enemy_group, False)
+    if collisions:
+        print("GG")
+
+    hits = pygame.sprite.groupcollide(shots_group, enemy_group, True, True);
+
+    shots_group.draw(display)
+    killer_group.draw(display)
     enemy_group.draw(display)
-
-
     # Update Display
     pygame.display.update()
     # Framerate
     clock.tick(FPS)
-
