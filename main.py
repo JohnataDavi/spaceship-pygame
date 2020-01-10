@@ -26,7 +26,9 @@ pygame.init()
 clock = pygame.time.Clock();
 tick_timer = 100
 display = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption("Corno Adventure")
+pygame.display.set_caption("The Invasion of Lolis")
+icon = pygame.image.load("data/images/icon.png")
+pygame.display.set_icon(icon)
 FPS = 60
 
 # Background
