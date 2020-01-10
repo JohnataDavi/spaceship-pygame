@@ -1,81 +1,77 @@
-# Doc Pygame:   https://www.pygame.org/docs/
-# Sounds:       https://opengameart.org/
-# Sprites:      https://www.pixilart.com/
 import pygame
-pygame.init()
-display = pygame.display.set_mode([1280, 720])
-pygame.display.set_caption("Jogo de corno 2D")
+import sys
+import random
+from enemy import Enemy
+from killer import Killer
 
-# Sprites
-spriteGroup = pygame.sprite.Group()
-
-monster = pygame.sprite.Sprite(spriteGroup)
-monster.image = pygame.image.load("data/Images/xexeca.png").convert_alpha()
-piru = pygame.sprite.Sprite(spriteGroup)
-piru.image = pygame.image.load("data/Images/piru.png").convert_alpha()
-# Changing image scale
-monster.image = pygame.transform.scale(monster.image, [120, 120])
-monster.rect = monster.image.get_rect()
-piru.image = pygame.transform.scale(piru.image, [120, 120])
-piru.rect = piru.image.get_rect()
-# Objects
-rect = pygame.Rect(540, 310, 300, 50)
-speed = 10
-
-# Sounds
-sound = pygame.mixer.Sound("data/Sounds/laserpew.ogg")
-
-clock = pygame.time.Clock();
-gameLoop = True
-
-while gameLoop:
-    # Framerate
-    clock.tick(60)
-
+def events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            gameLoop = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                sound.play()
-        '''
-        elif event.type == pygame.KEYDOWN:
-            if  event.key == pygame.K_w:
-                rect[1] -= 50
-            if  event.key == pygame.K_a:
-                rect[0] -= 50
-            if  event.key == pygame.K_s:
-                rect[1] += 50
-            if  event.key == pygame.K_d:
-                rect[0] += 50
-        '''
-    # Get inputs w, a, s and d 
-    keys = pygame.key.get_pressed();
-    if keys[pygame.K_w]:
-        monster.rect[1] -= speed
-    if keys[pygame.K_a]:
-        monster.rect[0] -= speed
-    if keys[pygame.K_s]:
-        monster.rect[1] += speed
-    if keys[pygame.K_d]:  
-        monster.rect[0] += speed
+            pygame.quit()
+            sys.exit()
 
-    if keys[pygame.K_UP]:
-        piru.rect[1] -= speed
-    if keys[pygame.K_LEFT]:
-        piru.rect[0] -= speed
-    if keys[pygame.K_DOWN]:
-        piru.rect[1] += speed
-    if keys[pygame.K_RIGHT]:  
-        piru.rect[0] += speed
-    
+# Define display
+W, H = 1280, 720
+WINDOW_SIZE = [W, H]
 
-    # Draw...
-    display.fill([10, 10, 10])
-    pygame.draw.rect(display, [0, 0, 255], rect);
-    
-    spriteGroup.update()
-    spriteGroup.draw(display)
+# Setup pygame
+pygame.init()
+clock = pygame.time.Clock();
+tick_timer = 100
+display = pygame.display.set_mode(WINDOW_SIZE)
+pygame.display.set_caption("Corno Adventure")
+FPS = 60
+
+# Background
+bg_imgs = []
+for x in range(5):
+    bg_imgs.append(pygame.image.load("data/images/background/layers/parallax-"+str(x)+".png").convert_alpha())
+    bg_imgs[x] = pygame.transform.scale(bg_imgs[x], WINDOW_SIZE)
+
+bg_velocity = [.1, .2, .5, .9, 1.8]
+bg_x = [0, 0, 0, 0, 0]
+
+# Enemy
+enemy_group = pygame.sprite.Group()
+
+# Killer
+killer_group = pygame.sprite.Group()
+
+player = Killer(killer_group)
+
+#test1.rect[0] = WINDOW_SIZE[0]
+
+# Main Loop
+while True:
+    events()
+    # Draw background
+    for x in range(len(bg_imgs)):
+        rel_x = bg_x[x] % bg_imgs[x].get_rect().width
+        display.blit(bg_imgs[x], (rel_x - bg_imgs[x].get_rect().width, 0))
+        if rel_x < W:
+            display.blit(bg_imgs[x], (rel_x, 0))
+        else:
+            bg_x[x] = bg_velocity[x]
+        bg_x[x] -= bg_velocity[x]
+
+    tick_timer += 1
+    if tick_timer > 60:
+        tick_timer = 0
+        # 40% de chance de probabilidade
+        if random.random() < 0.4:
+            new_enemy = Enemy(enemy_group)
+            x = WINDOW_SIZE[0]
+            y = random.randint(90, WINDOW_SIZE[1] - 90)
+            new_enemy.rect.move_ip(x, y)
+
+    killer_group.update()
+    killer_group.draw(display)
+    enemy_group.update()
+    enemy_group.draw(display)
+
 
     # Update Display
     pygame.display.update()
+    # Framerate
+    clock.tick(FPS)
+
