@@ -1,1 +1,1 @@
-# 2d-game-python
+# Spaceship Pygame
