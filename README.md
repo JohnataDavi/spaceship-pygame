@@ -1,7 +1,7 @@
 # The Invasion of Lolis
 The Invasion of Lolis, is a 2d spaceship game created with the goal of entertainment for Otaku group.
 <br>
-<img src="data/images/1.png" width="641" height="376"/>
+<img src="https://github.com/JohnataDavi/spaceship-pygame/blob/master/data/images/1.png" width="641" height="376"/>
 
 ## Usage
 Basically you control a space ship, you are initially in Otakolândia, and your main objective is to survive Lolis's invasion from Lolilândia.
